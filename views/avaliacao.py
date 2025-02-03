@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-from views.utils import process_image
+from views.utils import process_image, exibir_texto
 
 st.title("✍️ Conversão de Texto Manuscrito")
 st.markdown("""
@@ -35,5 +35,6 @@ if uploaded_file is not None:
                     file_name="texto_extraido.txt",
                     mime="text/plain"
                 )
+
         except Exception as e:
             st.error(f'Erro ao processar a imagem: {str(e)}')

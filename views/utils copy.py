@@ -37,11 +37,12 @@ def process_image(image_content):
         )
 
         # Perform handwritten text detection with language hints
-        response = client.document_text_detection(
+        response = client.text_detection(
             image=image,
             image_context=image_context
         )
         # Get full text annotations
+        #document = response.full_text_annotation
         document = response.full_text_annotation
 
         if response.error.message:
@@ -65,52 +66,9 @@ def process_image(image_content):
 
         if not handwritten_text:
             return "Não foi detectado texto escrito a mão na imagem."
-        
-        #testes_imagem(response)
 
         # Join all handwritten words with spaces
         return ' '.join(handwritten_text)
 
     except Exception as e:
         raise Exception(f"Error processing image: {str(e)}")
-    
-def testes_imagem(response):
-    for page in response.full_text_annotation.pages:
-        for block in page.blocks:
-            print(f"\nBlock confidence: {block.confidence}\n")
-
-            for paragraph in block.paragraphs:
-                print("Paragraph confidence: {}".format(paragraph.confidence))
-
-                for word in paragraph.words:
-                    word_text = "".join([symbol.text for symbol in word.symbols])
-                    print(
-                        "Word text: {} (confidence: {})".format(
-                            word_text, word.confidence
-                        )
-                    )
-
-                    for symbol in word.symbols:
-                        print(
-                            "\tSymbol: {} (confidence: {})".format(
-                                symbol.text, symbol.confidence
-                            )
-                        )
-def exibir_texto(response):
-    markdown = ""
-
-    for page in response.full_text_annotation.pages:
-        for block in page.blocks:
-            markdown += f"\nBlock confidence: {block.confidence}\n"
-
-            for paragraph in block.paragraphs:
-                markdown += f"Paragraph confidence: {paragraph.confidence}\n"
-
-                for word in paragraph.words:
-                    word_text = "".join([symbol.text for symbol in word.symbols])
-                    markdown += f"Word text: {word_text} (confidence: {word.confidence})\n"
-
-                    for symbol in word.symbols:
-                        markdown += f"\tSymbol: {symbol.text} (confidence: {symbol.confidence})\n"
-
-    return markdown
