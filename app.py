@@ -1,7 +1,6 @@
 from PIL import Image
 import streamlit as st
 import services.supabase_client as supabase_client
-from views import avaliacao
 
 im = Image.open("images/favicon.png")
 st.set_page_config(
