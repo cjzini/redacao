@@ -10,7 +10,7 @@ st.markdown("""
 # Widget para upload de imagem
 uploaded_file = st.file_uploader("Escolha um arquivo de imagem", 
                                  type=['png', 'jpg', 'jpeg'],
-                                 help="Selecione uma imagem da redação manuscrito para extração de texto.")
+                                 help="Selecione uma imagem da redação manuscrita para extração do texto.")
 
 if uploaded_file is not None:
     # Exibir a imagem carregada
@@ -23,10 +23,13 @@ if uploaded_file is not None:
             with st.spinner('Processando imagem...'):
                 # Realizar OCR na imagem
                 texto_extraido = process_image(uploaded_file.getvalue())
+                #texto_analise = exibir_texto(uploaded_file.getvalue())
                 
                 # Exibir o texto extraído
-                st.subheader('Texto Extraído:')
-                st.write(texto_extraido)
+                # st.subheader('Texto Extraído:')
+                # st.text(texto_extraido)
+
+                txt = st.text_area("Texto Extraído", texto_extraido, height=800)
                 
                 # Opção para baixar o texto extraído
                 st.download_button(
@@ -35,6 +38,9 @@ if uploaded_file is not None:
                     file_name="texto_extraido.txt",
                     mime="text/plain"
                 )
+
+                #st.subheader('Analise:')
+                #st.markdown(texto_analise)
 
         except Exception as e:
             st.error(f'Erro ao processar a imagem: {str(e)}')
