@@ -23,9 +23,18 @@ with st.expander("ℹ️ Como usar"):
 
 # Add image preprocessing options
 st.subheader("Opções de Pré-processamento")
-use_grayscale = st.checkbox("Aplicar escala de cinza", value=True)
-use_threshold = st.checkbox("Aplicar binarização", value=True)
-use_denoising = st.checkbox("Aplicar redução de ruído", value=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    use_grayscale = st.checkbox("Aplicar escala de cinza", value=True)
+    use_threshold = st.checkbox("Aplicar binarização", value=True)
+    use_denoising = st.checkbox("Aplicar redução de ruído", value=True)
+
+with col2:
+    use_contrast = st.checkbox("Aumentar contraste (CLAHE)", value=False)
+    use_morphological = st.checkbox("Aplicar dilatação e erosão", value=False,
+                                    help="Ajuda a reforçar os contornos das letras")
 
 # File uploader
 uploaded_file = st.file_uploader(
@@ -45,7 +54,9 @@ if uploaded_file is not None:
             image_bytes,
             use_grayscale=use_grayscale,
             use_threshold=use_threshold,
-            use_denoising=use_denoising
+            use_denoising=use_denoising,
+            use_contrast_enhancement=use_contrast,
+            use_morphological=use_morphological
         )
         processed_image = Image.open(io.BytesIO(processed_bytes))
 

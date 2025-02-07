@@ -78,7 +78,7 @@ def main_page():
     #admin_pages = [admin]
     account_pages = [settings, logout_page]
 
-    st.logo("images/logo_2coringas.png")
+    st.logo("images/logo_palavra.png")
 
     page_dict = {}
     if st.session_state.role in ["integ", "admin"]:
