@@ -4,9 +4,12 @@ import streamlit as st
 st.write("## Configurações")
 
 with st.form("config_form"):
-        pasta = st.text_input('Diretório de trabalho', value='D:\\Temp\\XML')
-        btn_salvar = st.form_submit_button("Salvar")
-        if btn_salvar:
-            st.success("Configurações salvas com sucesso!")
-            time.sleep(2)
-            st.rerun()
+    option = st.selectbox(
+        "Selecione o modelo de IA a ser utilizado na extração do texto:",
+        ("Google Vison API", "Amazon Textract", "Microsoft Azure Computer Vision"),
+    )
+    btn_salvar = st.form_submit_button("Salvar")
+    if btn_salvar:
+        st.success("AI selecionada: {}".format(option))
+        time.sleep(2)
+        st.rerun()

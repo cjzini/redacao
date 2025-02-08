@@ -42,6 +42,27 @@ uploaded_file = st.file_uploader(
     type=["png", "jpg", "jpeg"],
     help="Selecione uma imagem da redação manuscrita para extração do texto."
 )
+st.html(
+        """
+        <style>
+
+        [data-testid='stFileUploaderDropzoneInstructions'] > div > span {
+        display: none;
+        }
+
+        [data-testid='stFileUploaderDropzoneInstructions'] > div::before {
+        content: 'Arraste e solte arquivos aqui';
+        }
+
+
+        [data-testid='stFileDropzoneInstructions'] { text-indent: -9999px; line-height: 0; } [
+        
+        data-testid='stFileDropzoneInstructions']::after { line-height: initial; 
+        content: "Limite 200MB por arquivo"; text-indent: 0; }
+    }
+        </style>
+        """
+    )
 
 if uploaded_file is not None:
     try:

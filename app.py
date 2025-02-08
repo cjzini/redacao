@@ -61,20 +61,20 @@ def main_page():
         icon=":material/dashboard:",
         default=(role == "admin"),
     )
-    avaliacao = st.Page(
-        "views/avaliacao.py",
-        title="Avaliação de Redação",
-        icon=":material/description:",
-    )
+    # avaliacao = st.Page(
+    #     "views/avaliacao.py",
+    #     title="Avaliação de Redação",
+    #     icon=":material/description:",
+    # )
     pre_processamento = st.Page(
         "views/pre_processamento.py",
-        title="Pré-processamento",
+        title="Protótipo de Pre-processamento",
         icon=":material/description:",
     )
     settings = st.Page("services/settings.py", title="Configuração", icon=":material/settings:")
     logout_page = st.Page(logout_user, title="Sair", icon=":material/logout:")
 
-    user_pages = [dashboard, avaliacao, pre_processamento]
+    user_pages = [dashboard, pre_processamento]
     #admin_pages = [admin]
     account_pages = [settings, logout_page]
 
