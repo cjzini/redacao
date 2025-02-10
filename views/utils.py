@@ -11,8 +11,8 @@ def get_vision_client():
     Create and return an authenticated Vision API client
     """
     try:
-        #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'util/palavra-mestra.json'
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["visionapi"]['palavra-mestra']
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'util/palavra-mestra.json'
+        #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["visionapi"]['palavra-mestra']
         # Return authenticated client
         return vision.ImageAnnotatorClient()
     except Exception as e:
