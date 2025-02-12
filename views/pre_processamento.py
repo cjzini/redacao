@@ -3,6 +3,10 @@ import io
 from PIL import Image
 from views.utils import preprocess_image, process_image
 
+if 'logged_in' not in st.session_state or not st.session_state.logged_in:
+    st.warning("Por favor, faça login para acessar o aplicativo.")
+    st.stop()
+
 st.title("✍️ Conversão de Texto Manuscrito")
 st.markdown("""
 Faça o upload de uma imagem de uma redação contendo texto manuscrito para convertê-lo em texto digital.

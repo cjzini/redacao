@@ -42,7 +42,7 @@ def logout_user():
 
 # Interface de login
 def login_page():
-    st.title("Entrar")  
+    st.title("🔐 Entrar")
     with st.form("login_form"):
         email = st.text_input("Email")
         password = st.text_input("Senha", type="password")
