@@ -1,6 +1,7 @@
 import time
 import streamlit as st
 
+
 st.write("## Configurações")
 
 with st.form("config_form"):
