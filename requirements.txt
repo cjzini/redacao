@@ -12,6 +12,7 @@ certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
 deprecation==2.1.0
+distro==1.9.0
 exceptiongroup==1.2.2
 frozenlist==1.5.0
 gitdb==4.0.12
@@ -31,6 +32,7 @@ httpx==0.28.1
 hyperframe==6.1.0
 idna==3.10
 Jinja2==3.1.5
+jiter==0.8.2
 jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
 markdown-it-py==3.0.0
@@ -39,6 +41,7 @@ mdurl==0.1.2
 multidict==6.1.0
 narwhals==1.24.1
 numpy==2.2.2
+openai==1.62.0
 opencv-python==4.11.0.86
 packaging==24.2
 pandas==2.2.3
@@ -74,6 +77,7 @@ supafunc==0.9.3
 tenacity==9.0.0
 toml==0.10.2
 tornado==6.4.2
+tqdm==4.67.1
 typing_extensions==4.12.2
 tzdata==2025.1
 urllib3==2.3.0

@@ -1,7 +1,11 @@
 import streamlit as st
 import io
 from PIL import Image
-from views.utils import preprocess_image, process_image
+from services import supabase_client
+import services.image_preprocess as image_preprocess
+import services.visionai_client as visionai_client
+import services.openai_client as openai_client
+import services.settings as settings
 
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.warning("Por favor, faça login para acessar o aplicativo.")
@@ -11,6 +15,10 @@ st.title("✍️ Conversão de Texto Manuscrito")
 st.markdown("""
 Faça o upload de uma imagem de uma redação contendo texto manuscrito para convertê-lo em texto digital.
 """)
+supabase = supabase_client.get_supabase_connection()
+user_id = st.session_state.user.id
+ia_selected = settings.load_config(supabase, user_id)["text_extraction_api"]
+st.info(f"AI selecionada: **{ia_selected}**")
 
 # Add usage instructions
 with st.expander("ℹ️ Como usar"):
@@ -32,7 +40,8 @@ col1, col2 = st.columns(2)
 
 with col1:
     use_grayscale = st.checkbox("Aplicar escala de cinza", value=True)
-    use_threshold = st.checkbox("Aplicar binarização", value=True)
+    use_threshold = st.checkbox("Aplicar binarização", value=True,
+                                help="Para esse filtro funcionar, é obrigatório aplicar a escala de cinza")
     use_denoising = st.checkbox("Aplicar redução de ruído", value=True)
 
 with col2:
@@ -55,7 +64,7 @@ st.html(
         }
 
         [data-testid='stFileUploaderDropzoneInstructions'] > div::before {
-        content: 'Arraste e solte arquivos aqui';
+        content: 'Arraste e solte o arquivo aqui';
         }
 
 
@@ -75,7 +84,7 @@ if uploaded_file is not None:
         original_image = Image.open(uploaded_file)
 
         # Get the preprocessed image with selected filters
-        processed_bytes = preprocess_image(
+        processed_bytes = image_preprocess.preprocess_image(
             image_bytes,
             use_grayscale=use_grayscale,
             use_threshold=use_threshold,
@@ -104,11 +113,14 @@ if uploaded_file is not None:
         # Add process button
         if st.button("Extrair Texto"):
             with st.spinner('Processando imagem...'):
-                # Process the selected image
-                if image_choice == "Imagem Pré-processada":
-                    extracted_text = process_image(processed_bytes)
-                else:  # Imagem Original
-                    extracted_text = process_image(image_bytes)
+                # Select which image to process
+                img_to_process = image_bytes if image_choice == "Imagem Original" else processed_bytes
+
+                # Process the image using selected API
+                if ia_selected == 'Vision API':
+                    extracted_text = visionai_client.process_image(img_to_process)
+                else:  # Default to OpenAI API
+                    extracted_text = openai_client.process_image(img_to_process)
 
             # Display results
             st.text_area("Texto Extraído", extracted_text, height=800)

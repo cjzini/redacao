@@ -1,4 +1,3 @@
-import time
 import os
 import streamlit as st
 from services import supabase_client

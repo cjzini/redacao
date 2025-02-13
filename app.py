@@ -71,7 +71,7 @@ def main_page():
         title="Protótipo de Pre-processamento",
         icon=":material/description:",
     )
-    settings = st.Page("services/settings.py", title="Configuração", icon=":material/settings:")
+    settings = st.Page("services/settings.py", title="Configurações", icon=":material/settings:")
     logout_page = st.Page(logout_user, title="Sair", icon=":material/logout:")
 
     user_pages = [dashboard, pre_processamento]
