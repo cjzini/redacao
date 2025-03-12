@@ -68,13 +68,18 @@ def main_page():
     # )
     pre_processamento = st.Page(
         "views/pre_processamento.py",
-        title="Protótipo de Pre-processamento",
+        title="Extração de Texto",
+        icon=":material/convert_to_text:",
+    )
+    avaliacao = st.Page(
+        "views/avaliacao.py",
+        title="Avaliação de Redação",
         icon=":material/description:",
     )
     settings = st.Page("services/settings.py", title="Configurações", icon=":material/settings:")
     logout_page = st.Page(logout_user, title="Sair", icon=":material/logout:")
 
-    user_pages = [dashboard, pre_processamento]
+    user_pages = [dashboard, pre_processamento, avaliacao]
     #admin_pages = [admin]
     account_pages = [settings, logout_page]
 

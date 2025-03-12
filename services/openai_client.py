@@ -1,6 +1,8 @@
+from http import client
 import streamlit as st
 import base64
 from openai import OpenAI
+from openai import OpenAIError
 
 def get_openai_client():
     """Initialize OpenAI client"""
@@ -56,3 +58,53 @@ def process_image(image_content):
         
     except Exception as e:
         raise Exception(f"Erro ao processar imagem com OpenAI: {str(e)}")
+
+def evaluate_essay(essay_text):
+    """
+    Send the essay text to a specific OpenAI Assistant for evaluation
+    """
+    try:
+        client = get_openai_client()
+        # Acessa diretamente o Assitente pré-criado na OpenAI
+        ASSISTANT_ID = st.secrets["OPENAI_ASSISTANT_ID"]
+        if not ASSISTANT_ID:
+            raise Exception("O ID do Assistente da OpenAI não está configurado.")
+
+        # Create a thread
+        thread = client.beta.threads.create()
+
+        # Add message to thread
+        client.beta.threads.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=essay_text
+        )
+
+        # Run the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=ASSISTANT_ID
+        )
+
+        # Wait for the run to complete
+        while run.status not in ["completed", "failed"]:
+            run = client.beta.threads.runs.retrieve(
+                thread_id=thread.id,
+                run_id=run.id
+            )
+
+        if run.status == "failed":
+            raise Exception("Assistente de IA falhou em processar a redação. Por favor, tente novamente.")
+
+        # Get the assistant's response
+        messages = client.beta.threads.messages.list(
+            thread_id=thread.id
+        )
+
+        # Return the latest assistant message
+        return messages.data[0].content[0].text.value
+
+    except OpenAIError as e:
+        raise Exception(f"Erro ao communicar com a OpenAI API: {str(e)}")
+    except Exception as e:
+        raise Exception(f"Um erro inesperado ocorreu: {str(e)}")

@@ -1,46 +1,60 @@
 import streamlit as st
-from PIL import Image
-from views.utils import process_image, exibir_texto
+import os
+import services.openai_client as openai_client
 
-st.title("✍️ Conversão de Texto Manuscrito")
+if 'logged_in' not in st.session_state or not st.session_state.logged_in:
+    st.warning("Por favor, faça login para acessar o aplicativo.")
+    st.stop()
+
+# Add custom CSS
 st.markdown("""
-    Faça o upload de uma imagem de uma redação contendo texto manuscrito para convertê-lo em texto digital.
+    <style>
+    .stTextArea textarea {
+        font-size: 16px !important;
+        min-height: 200px !important;
+    }
+    .evaluation-result {
+        background-color: #f0f2f6;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Main title
+st.title("📝 Avaliação de Redações")
+# Add usage instructions
+with st.expander("ℹ️ Como usar"):
+    st.markdown("""
+    1. Cole o texto da sua redação na área abaixo
+    2. Clique no botão "Avaliar Redação"
+    3. Aguarde a análise detalhada
     """)
+st.markdown("Cole sua redação abaixo para receber uma avaliação detalhada.")
 
-# Widget para upload de imagem
-uploaded_file = st.file_uploader("Escolha um arquivo de imagem", 
-                                 type=['png', 'jpg', 'jpeg'],
-                                 help="Selecione uma imagem da redação manuscrita para extração do texto.")
-
-if uploaded_file is not None:
-    # Exibir a imagem carregada
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Imagem carregada', use_container_width=True)
-    
-    # Botão para iniciar a extração de texto
-    if st.button('Extrair Texto'):
+# Essay input area
+essay_text = st.text_area(
+    "Texto da Redação",
+    height=300,
+    placeholder="Cole sua redação aqui..."
+)
+# Evaluation button
+if st.button("Avaliar Redação", type="primary", disabled=not essay_text):
+    if not essay_text:
+        st.error("Por favor, insira uma redação para avaliar.")
+    else:
         try:
-            with st.spinner('Processando imagem...'):
-                # Realizar OCR na imagem
-                texto_extraido = process_image(uploaded_file.getvalue())
-                #texto_analise = exibir_texto(uploaded_file.getvalue())
-                
-                # Exibir o texto extraído
-                # st.subheader('Texto Extraído:')
-                # st.text(texto_extraido)
-
-                txt = st.text_area("Texto Extraído", texto_extraido, height=800)
-                
-                # Opção para baixar o texto extraído
-                st.download_button(
-                    label="Baixar texto extraído",
-                    data=texto_extraido,
-                    file_name="texto_extraido.txt",
-                    mime="text/plain"
-                )
-
-                #st.subheader('Analise:')
-                #st.markdown(texto_analise)
+            with st.spinner("Analisando sua redação... Por favor, aguarde."):
+                evaluation = openai_client.evaluate_essay(essay_text)
+            st.info("Resultado da Avaliação")
+            st.markdown('<div class="evaluation-result">', unsafe_allow_html=True)
+            st.markdown(evaluation)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         except Exception as e:
-            st.error(f'Erro ao processar a imagem: {str(e)}')
+            st.error(f"Ocorreu um erro: {str(e)}")
+            if "api_key" in str(e).lower():
+                st.warning("Por favor, verifique se sua chave de API da OpenAI está configurada corretamente.")
+            elif "assistant" in str(e).lower():
+                st.warning("Por favor, verifique se o ID do assistente OpenAI está configurado corretamente.")

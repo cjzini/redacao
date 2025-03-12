@@ -1,24 +1,28 @@
 import streamlit as st
 import io
 from PIL import Image
-from services import supabase_client
 import services.image_preprocess as image_preprocess
 import services.visionai_client as visionai_client
 import services.openai_client as openai_client
-import services.settings as settings
 
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.warning("Por favor, faça login para acessar o aplicativo.")
     st.stop()
 
-st.title("✍️ Conversão de Texto Manuscrito")
+st.title("✍️ Extração de Texto Manuscrito")
 st.markdown("""
-Faça o upload de uma imagem de uma redação contendo texto manuscrito para convertê-lo em texto digital.
+Faça o upload de uma imagem de uma redação contendo texto manuscrito para transcreve-lo em texto digital.
 """)
-supabase = supabase_client.get_supabase_connection()
-user_id = st.session_state.user.id
-ia_selected = settings.load_config(supabase, user_id)["text_extraction_api"]
-st.info(f"AI selecionada: **{ia_selected}**")
+# supabase = supabase_client.get_supabase_connection()
+# user_id = st.session_state.user.id
+# ia_selected = settings.load_config(supabase, user_id)["text_extraction_api"]
+# API Selection
+api_option = st.selectbox(
+    "Selecionar API para extração de texto",
+    options=["Vision API", "OpenAI API"],
+    help="Escolha qual API será utilizada para extrair texto das imagens"
+)
+st.info(f"AI selecionada: **{api_option}**")
 
 # Add usage instructions
 with st.expander("ℹ️ Como usar"):
@@ -117,7 +121,7 @@ if uploaded_file is not None:
                 img_to_process = image_bytes if image_choice == "Imagem Original" else processed_bytes
 
                 # Process the image using selected API
-                if ia_selected == 'Vision API':
+                if api_option == 'Vision API':
                     extracted_text = visionai_client.process_image(img_to_process)
                 else:  # Default to OpenAI API
                     extracted_text = openai_client.process_image(img_to_process)
